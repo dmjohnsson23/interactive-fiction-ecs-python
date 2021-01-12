@@ -4,3 +4,5 @@ from .passage import Passage, Direction
 from .placement import Placement
 from .reactor import Reactor
 from .reference import Reference
+from .container import Container
+from .description import Description

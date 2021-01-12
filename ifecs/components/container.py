@@ -7,8 +7,9 @@ class Container(Component):
     A component describing how entities can be placed in or on this entity in the game world.
     """
 
-    def __init__(self, *verbs):
-        self.verbs = verbs
+    def __init__(self, weight_limit = None, size_limit = None):
+        self.weight_limit = weight_limit
+        self.size_limit = size_limit
 
     def assign(self, entity):
         self._entity = entity
@@ -17,10 +18,3 @@ class Container(Component):
     def children(self):
         return Placement.lookup(self._entity)
     
-    def can_hold(self, entity):
-        """
-        Returns true if this entity can hold the other entity.
-
-        Override this for custom behavior.
-        """
-        return True

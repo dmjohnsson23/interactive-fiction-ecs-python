@@ -8,9 +8,11 @@ class Placement(Component):
 
     lookup = defaultdict(set)
 
-    def __init__(self, parent_entity):
+    def __init__(self, parent_entity, weight = None, size = None):
         self._parent = parent_entity
         self._entity = None
+        self.weight = weight
+        self.size = size
     
     def assign(self, entity):
         self._entity = entity

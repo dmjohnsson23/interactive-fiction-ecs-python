@@ -17,13 +17,33 @@ class World:
             self._component_to_entity[type(component)].add(entity)
             component.assign(entity)
     
+    def remove_entity(self, entity: Entity):
+        """
+        Remove an entity and all associated components from the game.
+        """
+        del self._entity_to_component[entity]
+        # TODO we need to call an unassign hook in each destroyed component
+        for entity_set in self._component_to_entity:
+            entity_set.remove(entity)
+    
     def add_component(self, entity: Entity, component: Component):
         """
-        Add a component to an existing entity
+        Add a component to an existing entity.
         """
         self._entity_to_component[entity].append(component)
         self._component_to_entity[type(component)].add(entity)
         component.assign(entity)
+    
+    def remove_component(self, entity: Entity, component: Component):
+        """
+        Remove a specific component from a given entity.
+        """
+        if component in self._entity_to_component[entity]:
+            self._entity_to_component[entity].remove(component)
+            # TODO we need to call an unassign hook in each destroyed component
+            component_type = type(component)
+            if not any([isinstance(comp, component_type) for comp in self._entity_to_component[entity]]):
+                self._component_to_entity[component_type].remove(entity)
     
 
     def components_for_entity(self, entity: Entity, filter_component=None):
