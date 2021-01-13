@@ -1,4 +1,4 @@
-from .reactor import Rector
+from .reactor import Reactor
 from enum import Enum
 
 class Direction(Enum):
@@ -18,7 +18,7 @@ class Direction(Enum):
         if self is Direction.up: return Direction.down
         if self is Direction.down: return Direction.up
 
-class Passage(Rector):
+class Passage(Reactor):
     def __init__(self, direction, to_entity):
         self.direction = direction
         self.to_entity = to_entity

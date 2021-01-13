@@ -12,5 +12,8 @@ class System:
         """
         Perform actions based on the passed intent. Override this to
         define the behavior of your new system.
+
+        Should return the passed intent, optionally modified for other
+        systems down the pipe.
         """
-        pass
+        return intent

@@ -1,11 +1,13 @@
 from collections import defaultdict
 from .entity import Entity
 from .components import Component
+from .systems import SystemRunner, RootRunner
 
 class World:
     def __init__(self):
         self._entity_to_component = defaultdict(list)
         self._component_to_entity = defaultdict(set)
+        self._root_runner = RootRunner()
     
     def create_entity(self, *components: Component):
         """
@@ -67,4 +69,8 @@ class World:
             else:
                 final = final.intersection(self._component_to_entity[component])
         return final
+    
+
+    def add_system(self, system: System, before=None, after=None):
+        pass #TODO add system
 

@@ -1,4 +1,5 @@
 from .components import Actor, Reactor, Reference
+import re
 
 class Intent:
     def __init__(self, action, method, actor, reactor):
@@ -30,11 +31,43 @@ command_shortcuts = {
     'inventory': 'check inventory',
 }
 
+basic_words = {
+    'the',
+    'a',
+    'with',
+    'to',
+    'it',
+    'check',
+    'look',
+    'at',
+    'go',
+    'go to',
+}
+
 
 class InterpreterContext:
     def __init__(self):
+        self.recompile_lexicon()
+    
+    def recompile_lexicon(self):
         self.nouns = set(Reference.lookup.keys())
         self.verbs = set(Actor.lookup.keys()).union(Reactor.lookup.keys())
+        self.pattern = self._compile_lexicon_pattern(self.nouns.union(self.verbs).union(basic_words))
+    
+    def _compile_lexicon_pattern(self, word_list):
+        # Produce a pattern that looks like this:
+        # \b(?:dog house)|(?:house)|(?:dog)\b
+        return re.compile(r'\b(?:{})\b'.format(')|(?:'.join(
+            map(
+                # Escape all passed words in case they contain regex metacharacters
+                re.escape,
+                # There may be overlapping word matches in the lexicon. For example, "north", "west", 
+                # "north west", "west corridor", and "north west corridor" might all be valid 
+                # lexicon entries. In the event of a lexical overlap, the longer entry should always
+                # win. Thus, longer entries need to be sorted first in the compiled pattern.
+                sorted(word_list, key=len, reverse=True)
+            )
+        )))
 
     def interpret(self, command_string):
         """
@@ -55,6 +88,34 @@ class InterpreterContext:
         command_string = command_string.lower()
         if command_string in command_shortcuts:
             command_string = command_shortcuts[command_string]
-        words = command_string.split()
-        # TODO parse words into Intent
+        words = self._split_command(self.pattern, command_string)
+        # TODO detect part of speech and convert to Intent
+        
+    
+    def _split_command(self, lexicon_pattern, command_string):
+        """
+        Parse the command string into lexicon entries. (Some entries might be multi-word, 
+        hence why we can't just use string.split())
+        """
+        last_index = 0
+        words = []
+        unmatched_pattern = re.compile(r"\b[-'\w\s]+\b")
+        # TODO in the event there is unmatched text, try to determine if it is a noun or verb, 
+        # and adjust the error message accordingly
+        for match in lexicon_pattern.finditer(command_string):
+            # make sure there are no unmatched words
+            unmatched = unmatched_pattern.search(command_string, last_index, match.start())
+            if unmatched:
+                raise InterpreterError('Sorry, I do not know about this "{}" you speak of'.format(command_string[unmatched.start():unmatched.end()]))
+            # Add the matched lexicon entry to the list
+            words.append(command_string[match.start():match.end()])
+            last_index = match.end()
+        # Also check for unmatched words at the end of the string
+        unmatched = unmatched_pattern.search(command_string, last_index)
+        if unmatched:
+            raise InterpreterError('Sorry, I do not know about this "{}" you speak of'.format(command_string[unmatched.start():unmatched.end()]))
+        return words
 
+
+class InterpreterError(RuntimeError):
+    pass
