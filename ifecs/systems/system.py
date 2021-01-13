@@ -1,4 +1,5 @@
 from ..interpreter import Intent
+from ..game import Game
 
 class System:
     def filter_intent(self, intent: Intent):
@@ -8,7 +9,7 @@ class System:
         """
         return True
     
-    def process_intent(self, intent: Intent):
+    def process_intent(self, intent: Intent, game: Game):
         """
         Perform actions based on the passed intent. Override this to
         define the behavior of your new system.

@@ -29,6 +29,7 @@ command_shortcuts = {
     'west': 'go west',
     'i': 'check inventory',
     'inventory': 'check inventory',
+    'q': 'quit'
 }
 
 basic_words = {
@@ -37,11 +38,16 @@ basic_words = {
     'with',
     'to',
     'it',
-    'check',
-    'look',
     'at',
+}
+
+built_in_commands = {
+    'look',
+    'look at',
+    'check',
     'go',
     'go to',
+    'quit'
 }
 
 
@@ -51,7 +57,7 @@ class InterpreterContext:
     
     def recompile_lexicon(self):
         self.nouns = set(Reference.lookup.keys())
-        self.verbs = set(Actor.lookup.keys()).union(Reactor.lookup.keys())
+        self.verbs = set(Actor.lookup.keys()).union(Reactor.lookup.keys()).union(built_in_commands)
         self.pattern = self._compile_lexicon_pattern(self.nouns.union(self.verbs).union(basic_words))
     
     def _compile_lexicon_pattern(self, word_list):
@@ -69,7 +75,7 @@ class InterpreterContext:
             )
         )))
 
-    def interpret(self, command_string):
+    def interpret(self, command_string) -> Intent:
         """
         Convert an arbitrary command string to an Intent
         """

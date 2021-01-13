@@ -14,7 +14,7 @@ class RoomBuilder:
     def __init__(self, world: World, *names: str):
         self.entity = world.create_entity(
             comp.Reference(*names),
-            comp.container()
+            comp.Container()
         )
         self.world = world
         self.passages = {}
@@ -38,5 +38,6 @@ class RoomBuilder:
                 self.world.add_component(return_passage_entity, Reference(*passage_names))
         return self
     
-    def place_entity(self, entity: Entity):
+    def add_entity(self, entity: Entity):
         self.world.add_component(entity, comp.Placement(self.entity))
+        return self
