@@ -25,3 +25,7 @@ class TestCommandSplitter(unittest.TestCase):
     def test_unmatched_text(self):
         with self.assertRaises(InterpreterError):
             self.context._split_command(self.pattern, 'the dog house is a common metaphor for being in trouble')
+    
+    def test_dont_split_words(self):
+        with self.assertRaises(InterpreterError):
+            self.context._split_command(self.pattern, "thedoghousetype")

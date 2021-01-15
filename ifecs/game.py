@@ -18,7 +18,10 @@ class Game:
         Pass a received command to the interpreter, then to the be processed by 
         the systems in the world.
         """
-        self.world.process_intent(self.interpreter.interpret(command), self)
+        try:
+            self.world.process_intent(self.interpreter.interpret(command), self)
+        except InterpreterError as err:
+            self.output(err)
     
 
     def output(self, text):

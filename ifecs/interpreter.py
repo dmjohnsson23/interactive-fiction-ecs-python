@@ -63,7 +63,7 @@ class InterpreterContext:
     def _compile_lexicon_pattern(self, word_list):
         # Produce a pattern that looks like this:
         # \b(?:dog house)|(?:house)|(?:dog)\b
-        return re.compile(r'\b(?:{})\b'.format(')|(?:'.join(
+        return re.compile(r'\b(?:{})\b'.format('|'.join(
             map(
                 # Escape all passed words in case they contain regex metacharacters
                 re.escape,

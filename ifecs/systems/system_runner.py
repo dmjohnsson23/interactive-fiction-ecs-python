@@ -14,11 +14,11 @@ class SystemRunner:
         Begin a new execution frame, resetting the internal state.
         """
         self.intent = None
-        self.complete = False
+        self.is_complete = False
         self.game = game
     
     def trigger(self, triggered_by: SystemRunner = None):
-        if all([runner.complete for runner in self.dependencies]):
+        if all([runner.is_complete for runner in self.dependencies]):
             # The first dependency is considered the primary dependency, from which we take the intent
             intent = self.dependencies[0].intent
             if intent is None:
@@ -32,7 +32,7 @@ class SystemRunner:
     
     def complete(self, intent: Intent):
         self.intent = intent
-        self.complete = True
+        self.is_complete = True
         for runner in self.dependants:
             runner.trigger(self)
         self.game = None
